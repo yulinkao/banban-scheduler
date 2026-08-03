@@ -698,6 +698,12 @@ tr:last-child td {
   align-self: start;
 }
 
+.singleWeekWorkspace .sidePanel {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
 .sideSection {
   padding: 12px;
   display: grid;

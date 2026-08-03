@@ -1740,7 +1740,7 @@ export default function Home() {
 
       </section>
 
-      <section className="workspace">
+      <section className={`workspace ${plan.weekCount === 1 ? "singleWeekWorkspace" : ""}`}>
         <div className="weeks">
           {weekIndexes.map((week) => (
             <WeekCard key={week} plan={plan} week={week} totals={totals} onPointerDown={handlePointerDown} text={text} />

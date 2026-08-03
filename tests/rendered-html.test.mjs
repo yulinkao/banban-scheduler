@@ -78,6 +78,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /rosterControlGrid/);
   assert.match(page, /targetControlGrid/);
   assert.match(page, /shiftControlGrid/);
+  assert.match(page, /singleWeekWorkspace/);
   assert.match(page, /shiftBuilderSection/);
   assert.match(page, /已選班段/);
   assert.match(page, /shiftBuilderSection[\s\S]*selectedShift[\s\S]*totalStats[\s\S]*hours[\s\S]*people[\s\S]*coverageWindows[\s\S]*export[\s\S]*preset/);
@@ -97,6 +98,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.topIconButton/);
   assert.match(css, /\.helpDialog/);
   assert.match(css, /\.creditLine/);
+  assert.match(css, /\.singleWeekWorkspace \.sidePanel/);
   assert.match(css, /\.shiftBuilderSection \.shiftControlGrid/);
   assert.match(css, /repeat\(auto-fit, minmax\(132px, 1fr\)\)/);
   assert.match(css, /--hour-h:\s*clamp\(24px, 2\.8vh, 30px\)/);

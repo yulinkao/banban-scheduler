@@ -43,7 +43,7 @@ test("server-renders the scheduler shell", async () => {
   assert.match(html, /EN/);
   assert.match(html, /匯出全部 PNG/);
   assert.match(html, /使用說明/);
-  assert.match(html, /designed by yulin, generated with chatgpt/);
+  assert.doesNotMatch(html, /designed by yulin, generated with chatgpt/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -76,6 +76,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /詳細版本/);
   assert.match(page, /資料保存/);
   assert.match(page, /helpDialog/);
+  assert.match(page, /helpCredit/);
   assert.match(page, /designed by yulin, generated with chatgpt/);
   assert.match(page, /setupDeck/);
   assert.match(page, /rosterControlGrid/);
@@ -101,7 +102,8 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.topIconButton/);
   assert.match(css, /\.helpDialog/);
   assert.match(css, /\.helpDetails/);
-  assert.match(css, /\.creditLine/);
+  assert.match(css, /\.helpCredit/);
+  assert.doesNotMatch(css, /\.creditLine/);
   assert.match(css, /\.singleWeekWorkspace \.sidePanel/);
   assert.match(css, /\.shiftBuilderSection \.shiftControlGrid/);
   assert.match(css, /repeat\(auto-fit, minmax\(132px, 1fr\)\)/);

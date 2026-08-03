@@ -2038,7 +2038,6 @@ export default function Home() {
           </section>
         </aside>
       </section>
-      <footer className="creditLine">{text.creditLine}</footer>
       {helpOpen && (
         <div className="helpDialogBackdrop" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setHelpOpen(false);
@@ -2065,6 +2064,7 @@ export default function Home() {
                 ))}
               </div>
             </details>
+            <div className="helpCredit">{text.creditLine}</div>
           </section>
         </div>
       )}

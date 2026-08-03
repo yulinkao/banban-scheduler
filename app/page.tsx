@@ -275,7 +275,7 @@ const translations: Record<Locale, Copy> = {
       "完成後可匯出 PNG、班表 CSV、工時 CSV；JSON 可用來備份，換瀏覽器或電腦時再匯入。",
     ],
     helpClose: "關閉使用說明",
-    creditLine: "designed by yulin, generated with chatgpt",
+    creditLine: "designed by yulin, generated with chatgpt :)",
   },
   "zh-CN": {
     htmlLang: "zh-Hans",
@@ -385,7 +385,7 @@ const translations: Record<Locale, Copy> = {
       "完成后可导出 PNG、班表 CSV、工时 CSV；JSON 可用来备份，换浏览器或电脑时再导入。",
     ],
     helpClose: "关闭使用说明",
-    creditLine: "designed by yulin, generated with chatgpt",
+    creditLine: "designed by yulin, generated with chatgpt :)",
   },
   en: {
     htmlLang: "en",
@@ -495,7 +495,7 @@ const translations: Record<Locale, Copy> = {
       "Export PNG, schedule CSV, or hours CSV when done. Use JSON as a backup when switching browsers or computers.",
     ],
     helpClose: "Close instructions",
-    creditLine: "designed by yulin, generated with chatgpt",
+    creditLine: "designed by yulin, generated with chatgpt :)",
   },
 };
 

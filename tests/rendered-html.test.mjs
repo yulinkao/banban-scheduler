@@ -43,7 +43,7 @@ test("server-renders the scheduler shell", async () => {
   assert.match(html, /EN/);
   assert.match(html, /匯出全部 PNG/);
   assert.match(html, /使用說明/);
-  assert.doesNotMatch(html, /designed by yulin, generated with chatgpt/);
+  assert.doesNotMatch(html, /designed by yulin, generated with chatgpt :\)/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -77,7 +77,7 @@ test("removes starter preview code from the product", async () => {
   assert.doesNotMatch(page, /helpDetails|詳細版本|Detailed version/);
   assert.match(page, /helpDialog/);
   assert.match(page, /helpCredit/);
-  assert.match(page, /designed by yulin, generated with chatgpt/);
+  assert.match(page, /designed by yulin, generated with chatgpt :\)/);
   assert.match(page, /setupDeck/);
   assert.match(page, /rosterControlGrid/);
   assert.match(page, /targetControlGrid/);

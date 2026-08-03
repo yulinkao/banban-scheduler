@@ -103,8 +103,8 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.helpDialog/);
   assert.match(css, /\.helpDetails/);
   assert.match(css, /\.helpCredit/);
-  assert.match(css, /font-family:\s*Georgia, "Times New Roman", serif/);
-  assert.doesNotMatch(css, /Snell Roundhand|Brush Script|cursive/);
+  assert.match(css, /font-family:\s*"Bradley Hand", "Segoe Print", "Marker Felt", var\(--font-geist-sans\)/);
+  assert.doesNotMatch(css, /Snell Roundhand|Brush Script/);
   assert.doesNotMatch(css, /\.creditLine/);
   assert.match(css, /\.singleWeekWorkspace \.sidePanel/);
   assert.match(css, /scrollbar-gutter:\s*stable/);

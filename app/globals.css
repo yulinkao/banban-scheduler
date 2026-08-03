@@ -981,11 +981,11 @@ tr:last-child td {
 .helpCredit {
   justify-self: end;
   color: color-mix(in srgb, var(--muted) 72%, var(--panel));
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 12px;
-  font-style: italic;
+  font-family: "Bradley Hand", "Segoe Print", "Marker Felt", var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  font-style: normal;
   line-height: 1.2;
-  font-weight: 400;
+  font-weight: 500;
   text-align: right;
 }
 

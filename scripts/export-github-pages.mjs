@@ -52,6 +52,8 @@ function rewriteAbsoluteAssetPaths(html) {
     .replaceAll('href="/assets/', 'href="./assets/')
     .replaceAll('src="/assets/', 'src="./assets/')
     .replaceAll('href="/favicon.svg"', 'href="./favicon.svg"')
+    .replaceAll('\\"/assets/', '\\"./assets/')
+    .replaceAll('\\"/favicon.svg', '\\"./favicon.svg')
     .replaceAll('import("/assets/', 'import("./assets/')
     .replaceAll("import('/assets/", "import('./assets/")
     .replaceAll("import(`/assets/", "import(`./assets/")

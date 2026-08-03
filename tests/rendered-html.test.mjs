@@ -72,9 +72,9 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /班班难排搬搬排/);
   assert.match(page, /helpOpen/);
   assert.match(page, /helpSteps/);
-  assert.match(page, /helpDetails/);
-  assert.match(page, /詳細版本/);
-  assert.match(page, /資料保存/);
+  assert.match(page, /用積木方式把班段排進日曆/);
+  assert.match(page, /完成後可匯出 PNG、班表 CSV、工時 CSV/);
+  assert.doesNotMatch(page, /helpDetails|詳細版本|Detailed version/);
   assert.match(page, /helpDialog/);
   assert.match(page, /helpCredit/);
   assert.match(page, /designed by yulin, generated with chatgpt/);
@@ -101,7 +101,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.languagePicker/);
   assert.match(css, /\.topIconButton/);
   assert.match(css, /\.helpDialog/);
-  assert.match(css, /\.helpDetails/);
+  assert.doesNotMatch(css, /\.helpDetails/);
   assert.match(css, /\.helpCredit/);
   assert.match(css, /font-family:\s*"Bradley Hand", "Segoe Print", "Marker Felt", var\(--font-geist-sans\)/);
   assert.doesNotMatch(css, /Snell Roundhand|Brush Script/);

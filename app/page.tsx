@@ -71,11 +71,6 @@ type DragState = {
 type Locale = "zh-TW" | "zh-CN" | "en";
 type SaveStatus = "auto" | "saved" | "appliedDefault" | "blankReset" | "defaultSaved" | "defaultCleared" | "imported" | "importFailed";
 
-type HelpDetail = {
-  title: string;
-  body: string;
-};
-
 type Copy = {
   htmlLang: string;
   appTitle: string;
@@ -167,8 +162,6 @@ type Copy = {
   helpTitle: string;
   helpIntro: string;
   helpSteps: string[];
-  helpDetailsLabel: string;
-  helpDetails: HelpDetail[];
   helpClose: string;
   creditLine: string;
 };
@@ -272,40 +265,14 @@ const translations: Record<Locale, Copy> = {
     notRequired: "非需求",
     helpButton: "使用說明",
     helpTitle: "使用說明",
-    helpIntro: "班表會保存在目前瀏覽器，不會和其他人共用。",
+    helpIntro: "用積木方式把班段排進日曆；資料只存在目前瀏覽器，不需要登入，也不會和其他人共用。",
     helpSteps: [
-      "先在「角色 / 人員」新增需要排班的人，必要時調整顏色。",
-      "在「排班目標」設定週數、每週工時與同時需要幾人覆蓋。",
-      "用右側「時段」新增班段，或直接拖曳日曆上的班段來搬動、拉長、縮短。",
-      "在「需求時段」設定每天需要覆蓋的時間，右側統計會即時更新。",
-      "完成後可匯出 PNG、CSV，或用 JSON 備份和移到另一台電腦。",
-    ],
-    helpDetailsLabel: "詳細版本",
-    helpDetails: [
-      {
-        title: "1. 建立人員",
-        body: "先在上方「角色 / 人員」輸入姓名、選顏色並新增。人員可以刪除，刪除時他相關的班段也會一起移除。",
-      },
-      {
-        title: "2. 設定排班範圍",
-        body: "在「排班目標」選週數、每週總工時和覆蓋目標。覆蓋目標會依人數增加，三個人時就能選到 3 人。",
-      },
-      {
-        title: "3. 新增與調整班段",
-        body: "用右側「時段」選人員、日期、開始與結束時間後新增。日曆上的班段可以上下拖動，拖上下邊緣可以拉長或縮短。",
-      },
-      {
-        title: "4. 看覆蓋狀態",
-        body: "每天上方的小色條會顯示覆蓋狀態；右側「總統計」會即時顯示總工時、平均、覆蓋達標與缺口。",
-      },
-      {
-        title: "5. 匯出與備份",
-        body: "完成後可下載 PNG 圖片、班表 CSV、工時 CSV；JSON 可以當備份，也可以在另一台電腦匯入。",
-      },
-      {
-        title: "6. 資料保存",
-        body: "資料存在目前瀏覽器的本機儲存空間，不需要登入，也不會和其他人共用。換網址、換瀏覽器或換電腦時，請用 JSON 匯出 / 匯入搬資料。",
-      },
+      "先在「角色 / 人員」新增姓名並選顏色；刪除人員時，他的班段會一起移除。",
+      "到「排班目標」設定週數、每週總工時與覆蓋目標；覆蓋目標會依目前人數調整。",
+      "用右側「時段」選人員、日期、開始與結束時間，新增後就會出現在日曆上。",
+      "直接拖動日曆上的班段可以改時間；拖上下邊緣可以拉長或縮短。",
+      "在「需求時段」設定每天需要人手的時間；上方色條和右側統計會即時顯示達標、缺口與空班。",
+      "完成後可匯出 PNG、班表 CSV、工時 CSV；JSON 可用來備份，換瀏覽器或電腦時再匯入。",
     ],
     helpClose: "關閉使用說明",
     creditLine: "designed by yulin, generated with chatgpt",
@@ -408,40 +375,14 @@ const translations: Record<Locale, Copy> = {
     notRequired: "非需求",
     helpButton: "使用说明",
     helpTitle: "使用说明",
-    helpIntro: "班表会保存在当前浏览器，不会和其他人共享。",
+    helpIntro: "用积木方式把班段排进日历；数据只存在当前浏览器，不需要登录，也不会和其他人共享。",
     helpSteps: [
-      "先在「角色 / 人员」新增需要排班的人，必要时调整颜色。",
-      "在「排班目标」设置周数、每周工时与同时需要几人覆盖。",
-      "用右侧「时段」新增班段，或直接拖曳日历上的班段来移动、拉长、缩短。",
-      "在「需求时段」设置每天需要覆盖的时间，右侧统计会即时更新。",
-      "完成后可导出 PNG、CSV，或用 JSON 备份和移到另一台电脑。",
-    ],
-    helpDetailsLabel: "详细版本",
-    helpDetails: [
-      {
-        title: "1. 建立人员",
-        body: "先在上方「角色 / 人员」输入姓名、选颜色并新增。人员可以删除，删除时他相关的班段也会一起移除。",
-      },
-      {
-        title: "2. 设置排班范围",
-        body: "在「排班目标」选周数、每周总工时和覆盖目标。覆盖目标会依人数增加，三个人时就能选到 3 人。",
-      },
-      {
-        title: "3. 新增与调整班段",
-        body: "用右侧「时段」选人员、日期、开始与结束时间后新增。日历上的班段可以上下拖动，拖上下边缘可以拉长或缩短。",
-      },
-      {
-        title: "4. 看覆盖状态",
-        body: "每天上方的小色条会显示覆盖状态；右侧「总统计」会即时显示总工时、平均、覆盖达标与缺口。",
-      },
-      {
-        title: "5. 导出与备份",
-        body: "完成后可下载 PNG 图片、班表 CSV、工时 CSV；JSON 可以当备份，也可以在另一台电脑导入。",
-      },
-      {
-        title: "6. 数据保存",
-        body: "数据存在当前浏览器的本机存储空间，不需要登录，也不会和其他人共享。换网址、换浏览器或换电脑时，请用 JSON 导出 / 导入搬数据。",
-      },
+      "先在「角色 / 人员」新增姓名并选颜色；删除人员时，他的班段会一起移除。",
+      "到「排班目标」设置周数、每周总工时与覆盖目标；覆盖目标会依当前人数调整。",
+      "用右侧「时段」选人员、日期、开始与结束时间，新增后就会出现在日历上。",
+      "直接拖动日历上的班段可以改时间；拖上下边缘可以拉长或缩短。",
+      "在「需求时段」设置每天需要人手的时间；上方色条和右侧统计会即时显示达标、缺口与空班。",
+      "完成后可导出 PNG、班表 CSV、工时 CSV；JSON 可用来备份，换浏览器或电脑时再导入。",
     ],
     helpClose: "关闭使用说明",
     creditLine: "designed by yulin, generated with chatgpt",
@@ -544,40 +485,14 @@ const translations: Record<Locale, Copy> = {
     notRequired: "Not required",
     helpButton: "How to use",
     helpTitle: "How to use",
-    helpIntro: "Schedules are saved in this browser only, so each person keeps a separate plan.",
+    helpIntro: "Build schedules by moving shift blocks on the calendar. Data stays in this browser only, with no sign-in and no shared database.",
     helpSteps: [
-      "Add the people you need under Roles / People, and adjust colors if helpful.",
-      "Set the number of weeks, weekly hours, and coverage target under Schedule target.",
-      "Add shifts from the Shift panel, or drag blocks on the calendar to move, lengthen, or shorten them.",
-      "Use Coverage windows to define when each day needs staffing. The side stats update as you edit.",
-      "Export PNG or CSV files when you are done, or use JSON as a backup for another computer.",
-    ],
-    helpDetailsLabel: "Detailed version",
-    helpDetails: [
-      {
-        title: "1. Create people",
-        body: "Start in Roles / People: enter a name, choose a color, then add the person. People can be removed, and their shifts are removed with them.",
-      },
-      {
-        title: "2. Set the schedule range",
-        body: "In Schedule target, choose the number of weeks, weekly total hours, and coverage target. The coverage target grows with your team, so three people allows a target of 3.",
-      },
-      {
-        title: "3. Add and adjust shifts",
-        body: "Use the Shift panel to choose a person, date, start time, and end time. On the calendar, drag a shift up or down to move it, or drag its top or bottom edge to resize it.",
-      },
-      {
-        title: "4. Watch coverage",
-        body: "The small bar above each day shows coverage status. Totals on the right update immediately with total hours, weekly average, covered time, and gaps.",
-      },
-      {
-        title: "5. Export and back up",
-        body: "When you are done, download PNG images, schedule CSV, or hours CSV. JSON works as a backup and can be imported on another computer.",
-      },
-      {
-        title: "6. Local data",
-        body: "Your data is stored only in this browser. No sign-in is needed, and plans are not shared across users. Use JSON export / import when switching browsers, devices, or URLs.",
-      },
+      "Add people under Roles / People, choose a color, and remove anyone you no longer need. Their shifts are removed with them.",
+      "Set weeks, weekly hours, and coverage target under Schedule target. The coverage target adjusts to the current team size.",
+      "Use the Shift panel to choose a person, date, start time, and end time. New shifts appear on the calendar.",
+      "Drag a shift to move it, or drag its top or bottom edge to lengthen or shorten it.",
+      "Use Coverage windows to set when each day needs staffing. The day bars and side stats show met time, gaps, and empty time as you edit.",
+      "Export PNG, schedule CSV, or hours CSV when done. Use JSON as a backup when switching browsers or computers.",
     ],
     helpClose: "Close instructions",
     creditLine: "designed by yulin, generated with chatgpt",
@@ -2053,17 +1968,6 @@ export default function Home() {
             <ol className="helpSteps">
               {text.helpSteps.map((step) => <li key={step}>{step}</li>)}
             </ol>
-            <details className="helpDetails">
-              <summary>{text.helpDetailsLabel}</summary>
-              <div className="helpDetailsList">
-                {text.helpDetails.map((item) => (
-                  <article key={item.title}>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                  </article>
-                ))}
-              </div>
-            </details>
             <div className="helpCredit">{text.creditLine}</div>
           </section>
         </div>

@@ -72,6 +72,9 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /班班难排搬搬排/);
   assert.match(page, /helpOpen/);
   assert.match(page, /helpSteps/);
+  assert.match(page, /helpDetails/);
+  assert.match(page, /詳細版本/);
+  assert.match(page, /資料保存/);
   assert.match(page, /helpDialog/);
   assert.match(page, /designed by yulin, generated with chatgpt/);
   assert.match(page, /setupDeck/);
@@ -97,6 +100,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.languagePicker/);
   assert.match(css, /\.topIconButton/);
   assert.match(css, /\.helpDialog/);
+  assert.match(css, /\.helpDetails/);
   assert.match(css, /\.creditLine/);
   assert.match(css, /\.singleWeekWorkspace \.sidePanel/);
   assert.match(css, /\.shiftBuilderSection \.shiftControlGrid/);

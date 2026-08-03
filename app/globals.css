@@ -887,6 +887,8 @@ tr:last-child td {
 
 .helpDialog {
   width: min(520px, 100%);
+  max-height: min(760px, calc(100vh - 36px));
+  overflow: auto;
   display: grid;
   gap: 14px;
   padding: 16px;
@@ -923,6 +925,46 @@ tr:last-child td {
   gap: 8px;
   list-style: none;
   counter-reset: help-step;
+}
+
+.helpDetails {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.helpDetails summary {
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 760;
+  list-style-position: outside;
+}
+
+.helpDetailsList {
+  display: grid;
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.helpDetailsList article {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel-soft);
+}
+
+.helpDetailsList h3 {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 760;
+}
+
+.helpDetailsList p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
 }
 
 .helpSteps li {

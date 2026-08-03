@@ -71,6 +71,11 @@ type DragState = {
 type Locale = "zh-TW" | "zh-CN" | "en";
 type SaveStatus = "auto" | "saved" | "appliedDefault" | "blankReset" | "defaultSaved" | "defaultCleared" | "imported" | "importFailed";
 
+type HelpDetail = {
+  title: string;
+  body: string;
+};
+
 type Copy = {
   htmlLang: string;
   appTitle: string;
@@ -162,6 +167,8 @@ type Copy = {
   helpTitle: string;
   helpIntro: string;
   helpSteps: string[];
+  helpDetailsLabel: string;
+  helpDetails: HelpDetail[];
   helpClose: string;
   creditLine: string;
 };
@@ -273,6 +280,33 @@ const translations: Record<Locale, Copy> = {
       "在「需求時段」設定每天需要覆蓋的時間，右側統計會即時更新。",
       "完成後可匯出 PNG、CSV，或用 JSON 備份和移到另一台電腦。",
     ],
+    helpDetailsLabel: "詳細版本",
+    helpDetails: [
+      {
+        title: "1. 建立人員",
+        body: "先在上方「角色 / 人員」輸入姓名、選顏色並新增。人員可以刪除，刪除時他相關的班段也會一起移除。",
+      },
+      {
+        title: "2. 設定排班範圍",
+        body: "在「排班目標」選週數、每週總工時和覆蓋目標。覆蓋目標會依人數增加，三個人時就能選到 3 人。",
+      },
+      {
+        title: "3. 新增與調整班段",
+        body: "用右側「時段」選人員、日期、開始與結束時間後新增。日曆上的班段可以上下拖動，拖上下邊緣可以拉長或縮短。",
+      },
+      {
+        title: "4. 看覆蓋狀態",
+        body: "每天上方的小色條會顯示覆蓋狀態；右側「總統計」會即時顯示總工時、平均、覆蓋達標與缺口。",
+      },
+      {
+        title: "5. 匯出與備份",
+        body: "完成後可下載 PNG 圖片、班表 CSV、工時 CSV；JSON 可以當備份，也可以在另一台電腦匯入。",
+      },
+      {
+        title: "6. 資料保存",
+        body: "資料存在目前瀏覽器的本機儲存空間，不需要登入，也不會和其他人共用。換網址、換瀏覽器或換電腦時，請用 JSON 匯出 / 匯入搬資料。",
+      },
+    ],
     helpClose: "關閉使用說明",
     creditLine: "designed by yulin, generated with chatgpt",
   },
@@ -382,6 +416,33 @@ const translations: Record<Locale, Copy> = {
       "在「需求时段」设置每天需要覆盖的时间，右侧统计会即时更新。",
       "完成后可导出 PNG、CSV，或用 JSON 备份和移到另一台电脑。",
     ],
+    helpDetailsLabel: "详细版本",
+    helpDetails: [
+      {
+        title: "1. 建立人员",
+        body: "先在上方「角色 / 人员」输入姓名、选颜色并新增。人员可以删除，删除时他相关的班段也会一起移除。",
+      },
+      {
+        title: "2. 设置排班范围",
+        body: "在「排班目标」选周数、每周总工时和覆盖目标。覆盖目标会依人数增加，三个人时就能选到 3 人。",
+      },
+      {
+        title: "3. 新增与调整班段",
+        body: "用右侧「时段」选人员、日期、开始与结束时间后新增。日历上的班段可以上下拖动，拖上下边缘可以拉长或缩短。",
+      },
+      {
+        title: "4. 看覆盖状态",
+        body: "每天上方的小色条会显示覆盖状态；右侧「总统计」会即时显示总工时、平均、覆盖达标与缺口。",
+      },
+      {
+        title: "5. 导出与备份",
+        body: "完成后可下载 PNG 图片、班表 CSV、工时 CSV；JSON 可以当备份，也可以在另一台电脑导入。",
+      },
+      {
+        title: "6. 数据保存",
+        body: "数据存在当前浏览器的本机存储空间，不需要登录，也不会和其他人共享。换网址、换浏览器或换电脑时，请用 JSON 导出 / 导入搬数据。",
+      },
+    ],
     helpClose: "关闭使用说明",
     creditLine: "designed by yulin, generated with chatgpt",
   },
@@ -490,6 +551,33 @@ const translations: Record<Locale, Copy> = {
       "Add shifts from the Shift panel, or drag blocks on the calendar to move, lengthen, or shorten them.",
       "Use Coverage windows to define when each day needs staffing. The side stats update as you edit.",
       "Export PNG or CSV files when you are done, or use JSON as a backup for another computer.",
+    ],
+    helpDetailsLabel: "Detailed version",
+    helpDetails: [
+      {
+        title: "1. Create people",
+        body: "Start in Roles / People: enter a name, choose a color, then add the person. People can be removed, and their shifts are removed with them.",
+      },
+      {
+        title: "2. Set the schedule range",
+        body: "In Schedule target, choose the number of weeks, weekly total hours, and coverage target. The coverage target grows with your team, so three people allows a target of 3.",
+      },
+      {
+        title: "3. Add and adjust shifts",
+        body: "Use the Shift panel to choose a person, date, start time, and end time. On the calendar, drag a shift up or down to move it, or drag its top or bottom edge to resize it.",
+      },
+      {
+        title: "4. Watch coverage",
+        body: "The small bar above each day shows coverage status. Totals on the right update immediately with total hours, weekly average, covered time, and gaps.",
+      },
+      {
+        title: "5. Export and back up",
+        body: "When you are done, download PNG images, schedule CSV, or hours CSV. JSON works as a backup and can be imported on another computer.",
+      },
+      {
+        title: "6. Local data",
+        body: "Your data is stored only in this browser. No sign-in is needed, and plans are not shared across users. Use JSON export / import when switching browsers, devices, or URLs.",
+      },
     ],
     helpClose: "Close instructions",
     creditLine: "designed by yulin, generated with chatgpt",
@@ -1966,6 +2054,17 @@ export default function Home() {
             <ol className="helpSteps">
               {text.helpSteps.map((step) => <li key={step}>{step}</li>)}
             </ol>
+            <details className="helpDetails">
+              <summary>{text.helpDetailsLabel}</summary>
+              <div className="helpDetailsList">
+                {text.helpDetails.map((item) => (
+                  <article key={item.title}>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </article>
+                ))}
+              </div>
+            </details>
           </section>
         </div>
       )}

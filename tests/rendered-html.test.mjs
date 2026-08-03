@@ -105,6 +105,8 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.helpCredit/);
   assert.doesNotMatch(css, /\.creditLine/);
   assert.match(css, /\.singleWeekWorkspace \.sidePanel/);
+  assert.match(css, /scrollbar-gutter:\s*stable/);
+  assert.match(css, /max-height:\s*min\(calc\(\(clamp\(24px, 2\.8vh, 30px\) \* 24\) \+ 152px\), calc\(100vh - 28px\)\)/);
   assert.match(css, /\.shiftBuilderSection \.shiftControlGrid/);
   assert.match(css, /repeat\(auto-fit, minmax\(132px, 1fr\)\)/);
   assert.match(css, /--hour-h:\s*clamp\(24px, 2\.8vh, 30px\)/);

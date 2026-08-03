@@ -30,10 +30,21 @@ await writeFile(join(outDir, ".nojekyll"), "");
 
 const assetsDir = join(outDir, "assets");
 for (const filename of await readdir(assetsDir)) {
-  if (!filename.endsWith(".css")) continue;
-  const cssPath = join(assetsDir, filename);
-  const css = await readFile(cssPath, "utf8");
-  await writeFile(cssPath, css.replaceAll("url(/assets/", "url(./"));
+  const assetPath = join(assetsDir, filename);
+  if (filename.endsWith(".css")) {
+    const css = await readFile(assetPath, "utf8");
+    await writeFile(assetPath, css.replaceAll("url(/assets/", "url(./"));
+  }
+  if (filename.endsWith(".js")) {
+    const js = await readFile(assetPath, "utf8");
+    await writeFile(
+      assetPath,
+      js.replaceAll(
+        "return`/`+e",
+        "return new URL(e.replace(/^assets\\//,``),import.meta.url).href",
+      ),
+    );
+  }
 }
 
 function rewriteAbsoluteAssetPaths(html) {
@@ -41,6 +52,9 @@ function rewriteAbsoluteAssetPaths(html) {
     .replaceAll('href="/assets/', 'href="./assets/')
     .replaceAll('src="/assets/', 'src="./assets/')
     .replaceAll('href="/favicon.svg"', 'href="./favicon.svg"')
+    .replaceAll('import("/assets/', 'import("./assets/')
+    .replaceAll("import('/assets/", "import('./assets/")
+    .replaceAll("import(`/assets/", "import(`./assets/")
     .replaceAll("href=/assets/", "href=./assets/")
     .replaceAll("url(/assets/", "url(./assets/");
 }

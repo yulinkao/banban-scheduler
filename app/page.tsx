@@ -7,6 +7,7 @@ import {
   Clock3,
   Eraser,
   FileDown,
+  HelpCircle,
   ImageDown,
   Plus,
   Printer,
@@ -16,6 +17,7 @@ import {
   Trash2,
   Upload,
   UserPlus,
+  X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
@@ -156,6 +158,12 @@ type Copy = {
   emptyShort: string;
   coverageStatus: string;
   notRequired: string;
+  helpButton: string;
+  helpTitle: string;
+  helpIntro: string;
+  helpSteps: string[];
+  helpClose: string;
+  creditLine: string;
 };
 
 const translations: Record<Locale, Copy> = {
@@ -255,6 +263,18 @@ const translations: Record<Locale, Copy> = {
     emptyShort: "空",
     coverageStatus: "覆蓋狀態",
     notRequired: "非需求",
+    helpButton: "使用說明",
+    helpTitle: "使用說明",
+    helpIntro: "班表會保存在目前瀏覽器，不會和其他人共用。",
+    helpSteps: [
+      "先在「角色 / 人員」新增需要排班的人，必要時調整顏色。",
+      "在「排班目標」設定週數、每週工時與同時需要幾人覆蓋。",
+      "用右側「時段」新增班段，或直接拖曳日曆上的班段來搬動、拉長、縮短。",
+      "在「需求時段」設定每天需要覆蓋的時間，右側統計會即時更新。",
+      "完成後可匯出 PNG、CSV，或用 JSON 備份和移到另一台電腦。",
+    ],
+    helpClose: "關閉使用說明",
+    creditLine: "designed by yulin, generated with chatgpt",
   },
   "zh-CN": {
     htmlLang: "zh-Hans",
@@ -352,6 +372,18 @@ const translations: Record<Locale, Copy> = {
     emptyShort: "空",
     coverageStatus: "覆盖状态",
     notRequired: "非需求",
+    helpButton: "使用说明",
+    helpTitle: "使用说明",
+    helpIntro: "班表会保存在当前浏览器，不会和其他人共享。",
+    helpSteps: [
+      "先在「角色 / 人员」新增需要排班的人，必要时调整颜色。",
+      "在「排班目标」设置周数、每周工时与同时需要几人覆盖。",
+      "用右侧「时段」新增班段，或直接拖曳日历上的班段来移动、拉长、缩短。",
+      "在「需求时段」设置每天需要覆盖的时间，右侧统计会即时更新。",
+      "完成后可导出 PNG、CSV，或用 JSON 备份和移到另一台电脑。",
+    ],
+    helpClose: "关闭使用说明",
+    creditLine: "designed by yulin, generated with chatgpt",
   },
   en: {
     htmlLang: "en",
@@ -449,6 +481,18 @@ const translations: Record<Locale, Copy> = {
     emptyShort: "Empty",
     coverageStatus: "coverage status",
     notRequired: "Not required",
+    helpButton: "How to use",
+    helpTitle: "How to use",
+    helpIntro: "Schedules are saved in this browser only, so each person keeps a separate plan.",
+    helpSteps: [
+      "Add the people you need under Roles / People, and adjust colors if helpful.",
+      "Set the number of weeks, weekly hours, and coverage target under Schedule target.",
+      "Add shifts from the Shift panel, or drag blocks on the calendar to move, lengthen, or shorten them.",
+      "Use Coverage windows to define when each day needs staffing. The side stats update as you edit.",
+      "Export PNG or CSV files when you are done, or use JSON as a backup for another computer.",
+    ],
+    helpClose: "Close instructions",
+    creditLine: "designed by yulin, generated with chatgpt",
   },
 };
 
@@ -1243,6 +1287,7 @@ export default function Home() {
   const [hasCustomDefault, setHasCustomDefault] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("auto");
   const [locale, setLocale] = useState<Locale>(defaultLocale);
+  const [helpOpen, setHelpOpen] = useState(false);
   const dragRef = useRef<DragState | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const text = translations[locale];
@@ -1276,6 +1321,15 @@ export default function Home() {
     const timer = window.setTimeout(() => setSaveStatus("auto"), 1200);
     return () => window.clearTimeout(timer);
   }, [saveStatus]);
+
+  useEffect(() => {
+    if (!helpOpen) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setHelpOpen(false);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [helpOpen]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -1611,6 +1665,9 @@ export default function Home() {
           <button type="button" onClick={resetPlan}><RotateCcw size={16} />{text.resetDefault}</button>
           <button type="button" onClick={setCurrentAsDefault}><Save size={16} />{text.setDefault}</button>
           <button className="primary" type="button" onClick={downloadAllWeeksPng}><ImageDown size={16} />{text.exportAllPng}</button>
+          <button className="topIconButton" type="button" onClick={() => setHelpOpen(true)} aria-label={text.helpButton} title={text.helpButton}>
+            <HelpCircle size={17} />
+          </button>
         </div>
       </header>
 
@@ -1893,6 +1950,25 @@ export default function Home() {
           </section>
         </aside>
       </section>
+      <footer className="creditLine">{text.creditLine}</footer>
+      {helpOpen && (
+        <div className="helpDialogBackdrop" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setHelpOpen(false);
+        }}>
+          <section className="helpDialog" role="dialog" aria-modal="true" aria-labelledby="help-dialog-title">
+            <div className="helpDialogHeader">
+              <h2 id="help-dialog-title">{text.helpTitle}</h2>
+              <button className="iconButton" type="button" onClick={() => setHelpOpen(false)} aria-label={text.helpClose} title={text.helpClose}>
+                <X size={16} />
+              </button>
+            </div>
+            <p>{text.helpIntro}</p>
+            <ol className="helpSteps">
+              {text.helpSteps.map((step) => <li key={step}>{step}</li>)}
+            </ol>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

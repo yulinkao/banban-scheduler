@@ -42,6 +42,8 @@ test("server-renders the scheduler shell", async () => {
   assert.match(html, /简中/);
   assert.match(html, /EN/);
   assert.match(html, /匯出全部 PNG/);
+  assert.match(html, /使用說明/);
+  assert.match(html, /designed by yulin, generated with chatgpt/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -68,6 +70,10 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /zh-CN/);
   assert.match(page, /Banban Scheduler/);
   assert.match(page, /班班难排搬搬排/);
+  assert.match(page, /helpOpen/);
+  assert.match(page, /helpSteps/);
+  assert.match(page, /helpDialog/);
+  assert.match(page, /designed by yulin, generated with chatgpt/);
   assert.match(page, /setupDeck/);
   assert.match(page, /rosterControlGrid/);
   assert.match(page, /targetControlGrid/);
@@ -88,6 +94,9 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /minmax\(292px, 330px\)/);
   assert.match(css, /minmax\(360px, 1\.05fr\) minmax\(330px, \.95fr\)/);
   assert.match(css, /\.languagePicker/);
+  assert.match(css, /\.topIconButton/);
+  assert.match(css, /\.helpDialog/);
+  assert.match(css, /\.creditLine/);
   assert.match(css, /\.shiftBuilderSection \.shiftControlGrid/);
   assert.match(css, /repeat\(auto-fit, minmax\(132px, 1fr\)\)/);
   assert.match(css, /--hour-h:\s*clamp\(24px, 2\.8vh, 30px\)/);

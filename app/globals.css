@@ -998,6 +998,12 @@ tr:last-child td {
   line-height: 1.65;
 }
 
+.helpLicenseNote {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, #8f9b8d 14%, transparent), transparent 70%),
+    var(--panel-soft);
+}
+
 @media (max-width: 1500px) {
   .setupDeck {
     grid-template-columns: repeat(2, minmax(0, 1fr));

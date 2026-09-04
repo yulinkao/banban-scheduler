@@ -76,6 +76,11 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /資料保存提醒/);
   assert.match(page, /無痕模式、清除瀏覽器資料、換瀏覽器或電腦/);
   assert.match(page, /Data safety note/);
+  assert.match(page, /helpLicenseTitle/);
+  assert.match(page, /授權提醒/);
+  assert.match(page, /Yu-Lin Kao/);
+  assert.match(page, /商業使用、轉售、再發布、公開託管副本/);
+  assert.match(page, /License note/);
   assert.match(page, /用積木方式把班段排進日曆/);
   assert.match(page, /完成後可匯出 PNG、班表 CSV、工時 CSV/);
   assert.doesNotMatch(page, /helpDetails|詳細版本|Detailed version/);
@@ -108,6 +113,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /\.helpDialog/);
   assert.doesNotMatch(css, /\.helpDetails/);
   assert.match(css, /\.helpNote/);
+  assert.match(css, /\.helpLicenseNote/);
   assert.match(css, /\.helpCredit/);
   assert.match(css, /font-family:\s*"Bradley Hand", "Segoe Print", "Marker Felt", var\(--font-geist-sans\)/);
   assert.doesNotMatch(css, /Snell Roundhand|Brush Script/);
@@ -121,6 +127,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(layout, /班班難排搬搬排/);
   assert.doesNotMatch(layout, /description:/);
   assert.match(packageJson, /"name": "yulin-scheduler"/);
+  assert.match(packageJson, /"license": "UNLICENSED"/);
   assert.match(packageJson, /"lucide-react"/);
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview|Reer Operations|reer-shift/);
   assert.doesNotMatch(page, /roleId|roles/);

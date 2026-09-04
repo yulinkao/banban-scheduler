@@ -162,6 +162,8 @@ type Copy = {
   helpTitle: string;
   helpIntro: string;
   helpSteps: string[];
+  helpStorageTitle: string;
+  helpStorageBody: string;
   helpClose: string;
   creditLine: string;
 };
@@ -274,6 +276,9 @@ const translations: Record<Locale, Copy> = {
       "在「需求時段」設定每天需要人手的時間；上方色條和右側統計會即時顯示達標、缺口與空班。",
       "完成後可匯出 PNG、班表 CSV、工時 CSV；JSON 可用來備份，換瀏覽器或電腦時再匯入。",
     ],
+    helpStorageTitle: "資料保存提醒",
+    helpStorageBody:
+      "排班會自動存在目前瀏覽器。若使用無痕模式、清除瀏覽器資料、換瀏覽器或電腦，或瀏覽器自動回收網站儲存空間，資料可能會消失；重要版本記得先匯出「備份 JSON」，之後可用「匯入 JSON」還原。",
     helpClose: "關閉使用說明",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -384,6 +389,9 @@ const translations: Record<Locale, Copy> = {
       "在「需求时段」设置每天需要人手的时间；上方色条和右侧统计会即时显示达标、缺口与空班。",
       "完成后可导出 PNG、班表 CSV、工时 CSV；JSON 可用来备份，换浏览器或电脑时再导入。",
     ],
+    helpStorageTitle: "数据保存提醒",
+    helpStorageBody:
+      "排班会自动存在当前浏览器。若使用无痕模式、清除浏览器数据、换浏览器或电脑，或浏览器自动回收网站存储空间，数据可能会消失；重要版本记得先导出“备份 JSON”，之后可用“导入 JSON”还原。",
     helpClose: "关闭使用说明",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -494,6 +502,9 @@ const translations: Record<Locale, Copy> = {
       "Use Coverage windows to set when each day needs staffing. The day bars and side stats show met time, gaps, and empty time as you edit.",
       "Export PNG, schedule CSV, or hours CSV when done. Use JSON as a backup when switching browsers or computers.",
     ],
+    helpStorageTitle: "Data safety note",
+    helpStorageBody:
+      "Schedules are autosaved in this browser. Data may disappear if you use a private window, clear browser data, switch browsers or computers, or if the browser clears site storage. Export a Backup JSON for important versions, then restore it later with Import JSON.",
     helpClose: "Close instructions",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -1968,6 +1979,10 @@ export default function Home() {
             <ol className="helpSteps">
               {text.helpSteps.map((step) => <li key={step}>{step}</li>)}
             </ol>
+            <aside className="helpNote" aria-label={text.helpStorageTitle}>
+              <h3>{text.helpStorageTitle}</h3>
+              <p>{text.helpStorageBody}</p>
+            </aside>
             <div className="helpCredit">{text.creditLine}</div>
           </section>
         </div>

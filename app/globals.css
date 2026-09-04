@@ -144,6 +144,16 @@ tr:last-child td {
   gap: 14px;
 }
 
+.siteFooter {
+  justify-self: center;
+  max-width: min(980px, 100%);
+  padding: 2px 12px 8px;
+  color: color-mix(in srgb, var(--muted) 62%, var(--panel));
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: center;
+}
+
 .topbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -996,12 +1006,6 @@ tr:last-child td {
   color: var(--muted);
   font-size: 13px;
   line-height: 1.65;
-}
-
-.helpLicenseNote {
-  background:
-    linear-gradient(135deg, color-mix(in srgb, #8f9b8d 14%, transparent), transparent 70%),
-    var(--panel-soft);
 }
 
 @media (max-width: 1500px) {

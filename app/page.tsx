@@ -164,8 +164,7 @@ type Copy = {
   helpSteps: string[];
   helpStorageTitle: string;
   helpStorageBody: string;
-  helpLicenseTitle: string;
-  helpLicenseBody: string;
+  footerLicense: string;
   helpClose: string;
   creditLine: string;
 };
@@ -281,9 +280,7 @@ const translations: Record<Locale, Copy> = {
     helpStorageTitle: "資料保存提醒",
     helpStorageBody:
       "排班會自動存在目前瀏覽器。若使用無痕模式、清除瀏覽器資料、換瀏覽器或電腦，或瀏覽器自動回收網站儲存空間，資料可能會消失；重要版本記得先匯出「備份 JSON」，之後可用「匯入 JSON」還原。",
-    helpLicenseTitle: "授權提醒",
-    helpLicenseBody:
-      "網站與原始碼 © 2026 Yu-Lin Kao。歡迎個人使用；商業使用、轉售、再發布、公開託管副本，或基於本工具改作產品，需事先取得 Yu-Lin Kao 書面授權。",
+    footerLicense: "© 2026 Yu-Lin Kao. 歡迎個人使用；商業使用、轉售、再發布、公開託管副本或改作產品，需事先書面授權。",
     helpClose: "關閉使用說明",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -397,9 +394,7 @@ const translations: Record<Locale, Copy> = {
     helpStorageTitle: "数据保存提醒",
     helpStorageBody:
       "排班会自动存在当前浏览器。若使用无痕模式、清除浏览器数据、换浏览器或电脑，或浏览器自动回收网站存储空间，数据可能会消失；重要版本记得先导出“备份 JSON”，之后可用“导入 JSON”还原。",
-    helpLicenseTitle: "授权提醒",
-    helpLicenseBody:
-      "网站与源代码 © 2026 Yu-Lin Kao。欢迎个人使用；商业使用、转售、再发布、公开托管副本，或基于本工具改作产品，需事先取得 Yu-Lin Kao 书面授权。",
+    footerLicense: "© 2026 Yu-Lin Kao. 欢迎个人使用；商业使用、转售、再发布、公开托管副本或改作产品，需事先书面授权。",
     helpClose: "关闭使用说明",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -513,9 +508,7 @@ const translations: Record<Locale, Copy> = {
     helpStorageTitle: "Data safety note",
     helpStorageBody:
       "Schedules are autosaved in this browser. Data may disappear if you use a private window, clear browser data, switch browsers or computers, or if the browser clears site storage. Export a Backup JSON for important versions, then restore it later with Import JSON.",
-    helpLicenseTitle: "License note",
-    helpLicenseBody:
-      "Website and source code © 2026 Yu-Lin Kao. Personal use is welcome. Commercial use, resale, redistribution, public hosted copies, or derivative products require prior written permission from Yu-Lin Kao.",
+    footerLicense: "© 2026 Yu-Lin Kao. Personal use is welcome; commercial use, resale, redistribution, public hosted copies, or derivative products require prior written permission.",
     helpClose: "Close instructions",
     creditLine: "designed by yulin, generated with chatgpt :)",
   },
@@ -1975,6 +1968,9 @@ export default function Home() {
           </section>
         </aside>
       </section>
+      <footer className="siteFooter">
+        {text.footerLicense}
+      </footer>
       {helpOpen && (
         <div className="helpDialogBackdrop" onMouseDown={(event) => {
           if (event.target === event.currentTarget) setHelpOpen(false);
@@ -1993,10 +1989,6 @@ export default function Home() {
             <aside className="helpNote" aria-label={text.helpStorageTitle}>
               <h3>{text.helpStorageTitle}</h3>
               <p>{text.helpStorageBody}</p>
-            </aside>
-            <aside className="helpNote helpLicenseNote" aria-label={text.helpLicenseTitle}>
-              <h3>{text.helpLicenseTitle}</h3>
-              <p>{text.helpLicenseBody}</p>
             </aside>
             <div className="helpCredit">{text.creditLine}</div>
           </section>

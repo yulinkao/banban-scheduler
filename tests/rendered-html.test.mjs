@@ -116,6 +116,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /exportWeekWidth\s*=\s*2048/);
   assert.match(page, /exportWeekHeight\s*=\s*1600/);
   assert.match(page, /drawExportShift\(ctx, plan, slice, \{ dayX, bodyY, bodyH, dayW, range \}/);
+  assert.match(page, /ctx\.textAlign = "left";\s*drawTextEllipsis\(ctx, text\.dayNames\[day % 7\]/);
   assert.match(page, /localStorage/);
   assert.match(css, /width:\s*min\(1680px, 100%\)/);
   assert.match(css, /minmax\(292px, 330px\)/);

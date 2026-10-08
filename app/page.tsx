@@ -1251,6 +1251,7 @@ function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number,
     const stats = dayCoverage(plan, day);
     ctx.fillStyle = exportTheme.text;
     ctx.font = exportFont(21, 750);
+    ctx.textAlign = "left";
     drawTextEllipsis(ctx, text.dayNames[day % 7], headX, cardY + 16, dayW - 20);
     drawExportCoverageBar(ctx, plan, day, headX, cardY + 52, dayW - 20, 10);
     ctx.fillStyle = exportTheme.muted;

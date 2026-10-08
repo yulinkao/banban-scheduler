@@ -105,7 +105,9 @@ type Copy = {
   addPerson: string;
   currentPeople: string;
   noPeople: string;
+  editPersonName: (name: string) => string;
   removePerson: (name: string) => string;
+  unnamedPerson: string;
   targetSetup: string;
   weekCount: string;
   weeklyTarget: string;
@@ -213,7 +215,9 @@ const translations: Record<Locale, Copy> = {
     addPerson: "新增人員",
     currentPeople: "目前人員",
     noPeople: "尚未新增人員",
+    editPersonName: (name) => `編輯 ${name} 的名稱`,
     removePerson: (name) => `移除 ${name}`,
+    unnamedPerson: "未命名",
     targetSetup: "排班目標",
     weekCount: "週數",
     weeklyTarget: "每週總工時",
@@ -270,7 +274,7 @@ const translations: Record<Locale, Copy> = {
     helpTitle: "使用說明",
     helpIntro: "用積木方式把班段排進日曆；資料只存在目前瀏覽器，不需要登入，也不會和其他人共用。",
     helpSteps: [
-      "先在「角色 / 人員」新增姓名並選顏色；刪除人員時，他的班段會一起移除。",
+      "先在「角色 / 人員」新增或編輯姓名並選顏色；刪除人員時，他的班段會一起移除。",
       "到「排班目標」設定週數、每週總工時與覆蓋目標；覆蓋目標會依目前人數調整。",
       "用右側「時段」選人員、日期、開始與結束時間，新增後就會出現在日曆上。",
       "直接拖動日曆上的班段可以改時間；拖上下邊緣可以拉長或縮短。",
@@ -327,7 +331,9 @@ const translations: Record<Locale, Copy> = {
     addPerson: "新增人员",
     currentPeople: "当前人员",
     noPeople: "尚未新增人员",
+    editPersonName: (name) => `编辑 ${name} 的名称`,
     removePerson: (name) => `移除 ${name}`,
+    unnamedPerson: "未命名",
     targetSetup: "排班目标",
     weekCount: "周数",
     weeklyTarget: "每周总工时",
@@ -384,7 +390,7 @@ const translations: Record<Locale, Copy> = {
     helpTitle: "使用说明",
     helpIntro: "用积木方式把班段排进日历；数据只存在当前浏览器，不需要登录，也不会和其他人共享。",
     helpSteps: [
-      "先在「角色 / 人员」新增姓名并选颜色；删除人员时，他的班段会一起移除。",
+      "先在「角色 / 人员」新增或编辑姓名并选颜色；删除人员时，他的班段会一起移除。",
       "到「排班目标」设置周数、每周总工时与覆盖目标；覆盖目标会依当前人数调整。",
       "用右侧「时段」选人员、日期、开始与结束时间，新增后就会出现在日历上。",
       "直接拖动日历上的班段可以改时间；拖上下边缘可以拉长或缩短。",
@@ -441,7 +447,9 @@ const translations: Record<Locale, Copy> = {
     addPerson: "Add person",
     currentPeople: "Current people",
     noPeople: "No people yet",
+    editPersonName: (name) => `Edit ${name}'s name`,
     removePerson: (name) => `Remove ${name}`,
+    unnamedPerson: "Unnamed",
     targetSetup: "Schedule target",
     weekCount: "Weeks",
     weeklyTarget: "Weekly hours",
@@ -498,7 +506,7 @@ const translations: Record<Locale, Copy> = {
     helpTitle: "How to use",
     helpIntro: "Build schedules by moving shift blocks on the calendar. Data stays in this browser only, with no sign-in and no shared database.",
     helpSteps: [
-      "Add people under Roles / People, choose a color, and remove anyone you no longer need. Their shifts are removed with them.",
+      "Add or edit people under Roles / People, choose a color, and remove anyone you no longer need. Their shifts are removed with them.",
       "Set weeks, weekly hours, and coverage target under Schedule target. The coverage target adjusts to the current team size.",
       "Use the Shift panel to choose a person, date, start time, and end time. New shifts appear on the calendar.",
       "Drag a shift to move it, or drag its top or bottom edge to lengthen or shorten it.",
@@ -667,6 +675,10 @@ function timeToHour(value: string) {
 
 function personById(people: Person[], id: string) {
   return people.find((person) => person.id === id);
+}
+
+function personDisplayName(person: Person, text: Copy) {
+  return person.name.trim() || text.unnamedPerson;
 }
 
 function openAt(plan: Plan, absHour: number) {
@@ -1024,7 +1036,7 @@ function drawExportCoverageBar(ctx: CanvasRenderingContext2D, plan: Plan, day: n
   ctx.restore();
 }
 
-function drawExportShift(ctx: CanvasRenderingContext2D, plan: Plan, slice: Slice, geometry: { dayX: number; bodyY: number; bodyH: number; dayW: number }) {
+function drawExportShift(ctx: CanvasRenderingContext2D, plan: Plan, slice: Slice, geometry: { dayX: number; bodyY: number; bodyH: number; dayW: number }, text: Copy = translations[defaultLocale]) {
   const person = personById(plan.people, slice.shift.personId);
   if (!person) return;
   const { dayX, bodyY, bodyH, dayW } = geometry;
@@ -1058,7 +1070,7 @@ function drawExportShift(ctx: CanvasRenderingContext2D, plan: Plan, slice: Slice
   ctx.textBaseline = "top";
   ctx.fillStyle = exportTheme.text;
   ctx.font = exportFont(17, 700);
-  drawTextEllipsis(ctx, person.name, labelX, labelY, maxTextWidth);
+  drawTextEllipsis(ctx, personDisplayName(person, text), labelX, labelY, maxTextWidth);
   ctx.fillStyle = exportTheme.muted;
   ctx.font = exportFont(15, 500);
   drawTextEllipsis(ctx, `${fmtHour(slice.start)}-${fmtHour(slice.end)}`, labelX, labelY + 24, maxTextWidth);
@@ -1158,7 +1170,7 @@ function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number,
   days.forEach((day, index) => {
     const dayX = cardX + timeW + index * dayW;
     layoutSlices(shiftSlicesForDay(plan.shifts, day)).forEach((slice) => {
-      drawExportShift(ctx, plan, slice, { dayX, bodyY, bodyH, dayW });
+      drawExportShift(ctx, plan, slice, { dayX, bodyY, bodyH, dayW }, text);
     });
   });
   ctx.restore();
@@ -1259,18 +1271,19 @@ function WeekCard({
                   left: `${left}%`,
                   width: `${width}%`,
                 } as CSSProperties;
+                const displayName = personDisplayName(person, text);
                 return (
                   <button
                     className={`shiftBlock ${plan.selectedShiftId === slice.shift.id ? "selected" : ""}`}
                     key={`${slice.shift.id}-${day}`}
                   style={style}
                   type="button"
-                  title={`${person.name} ${dayLabel(day, text)} ${time}`}
+                  title={`${displayName} ${dayLabel(day, text)} ${time}`}
                   onPointerDown={(event) => onPointerDown(event, slice.shift)}
                   >
                     <span className="handle top" data-handle="top" style={firstSlice ? undefined : { visibility: "hidden" }} />
                     <span className="blockLabel">
-                      <strong>{person.name}</strong>
+                      <strong>{displayName}</strong>
                       <span>{time}</span>
                     </span>
                     <span className="handle bottom" data-handle="bottom" style={lastSlice ? undefined : { visibility: "hidden" }} />
@@ -1476,6 +1489,24 @@ export default function Home() {
     setNewPersonColor(fallbackColors[(plan.people.length + 1) % fallbackColors.length]);
   }
 
+  function updatePersonName(id: string, value: string) {
+    setPlan((current) => ({
+      ...current,
+      people: current.people.map((person) => (person.id === id ? { ...person, name: value } : person)),
+    }));
+  }
+
+  function commitPersonName(id: string) {
+    setPlan((current) => ({
+      ...current,
+      people: current.people.map((person) => {
+        if (person.id !== id) return person;
+        const name = person.name.trim() || text.unnamedPerson;
+        return name === person.name ? person : { ...person, name };
+      }),
+    }));
+  }
+
   function updateWeekCount(value: unknown) {
     const weekCount = normalizeWeekCount(value);
     setPlan((current) => constrainPlanToWeeks(current, weekCount));
@@ -1594,7 +1625,7 @@ export default function Home() {
         rows.push([
           text.csvWeek(Math.floor(start.day / 7) + 1),
           text.dayNames[start.day % 7],
-          person?.name || shift.personId,
+          person ? personDisplayName(person, text) : shift.personId,
           fmtExportHour(start.hour),
           dayLabel(end.day, text),
           fmtExportHour(end.hour),
@@ -1608,7 +1639,7 @@ export default function Home() {
     const rows: unknown[][] = [text.hoursCsvHeaders(weekIndexes)];
     plan.people.forEach((person) => {
       const weeks = weekIndexes.map((week) => totals[person.id]?.[week] || 0);
-      rows.push([person.name, ...weeks, weeks.reduce((sum, hours) => sum + hours, 0)]);
+      rows.push([personDisplayName(person, text), ...weeks, weeks.reduce((sum, hours) => sum + hours, 0)]);
     });
     downloadFile("hours.csv", "text/csv;charset=utf-8", "\ufeff" + csv(rows));
   }
@@ -1711,15 +1742,28 @@ export default function Home() {
           </div>
           <div className="personChips" aria-label={text.currentPeople}>
             {!plan.people.length && <span className="mutedText">{text.noPeople}</span>}
-            {plan.people.map((person) => (
-              <span className="personChip" key={person.id} style={{ "--person-color": person.color } as CSSProperties}>
-                <span className="dot" />
-                <span className="personChipName">{person.name}</span>
-                <button className="chipDeleteButton" type="button" aria-label={text.removePerson(person.name)} onClick={() => removePerson(person.id)}>
-                  <Trash2 size={13} />
-                </button>
-              </span>
-            ))}
+            {plan.people.map((person) => {
+              const displayName = personDisplayName(person, text);
+              return (
+                <span className="personChip" key={person.id} style={{ "--person-color": person.color } as CSSProperties}>
+                  <span className="dot" />
+                  <input
+                    className="personChipNameInput"
+                    value={person.name}
+                    onChange={(event) => updatePersonName(person.id, event.target.value)}
+                    onBlur={() => commitPersonName(person.id)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") event.currentTarget.blur();
+                    }}
+                    aria-label={text.editPersonName(displayName)}
+                    placeholder={text.unnamedPerson}
+                  />
+                  <button className="chipDeleteButton" type="button" aria-label={text.removePerson(displayName)} onClick={() => removePerson(person.id)}>
+                    <Trash2 size={13} />
+                  </button>
+                </span>
+              );
+            })}
           </div>
         </section>
 
@@ -1776,7 +1820,7 @@ export default function Home() {
                 <span>{text.person}</span>
                 <select value={draftShift.personId} onChange={(event) => setDraftShift((current) => ({ ...current, personId: event.target.value }))} disabled={!plan.people.length}>
                   {!plan.people.length && <option value="">{text.addPeopleFirst}</option>}
-                  {plan.people.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
+                  {plan.people.map((person) => <option key={person.id} value={person.id}>{personDisplayName(person, text)}</option>)}
                 </select>
               </label>
               <label>
@@ -1804,7 +1848,7 @@ export default function Home() {
                 <label>
                   <span>{text.person}</span>
                   <select value={selectedShift.personId} onChange={(event) => updateSelectedShift((shift) => ({ ...shift, personId: event.target.value }))}>
-                    {plan.people.map((person) => <option key={person.id} value={person.id}>{person.name}</option>)}
+                    {plan.people.map((person) => <option key={person.id} value={person.id}>{personDisplayName(person, text)}</option>)}
                   </select>
                 </label>
                 <label>
@@ -1877,7 +1921,7 @@ export default function Home() {
                     const weeks = weekIndexes.map((week) => totals[person.id]?.[week] || 0);
                     return (
                       <tr key={person.id}>
-                        <td><span className="personName" style={{ "--person-color": person.color } as CSSProperties}><span className="dot" />{person.name}</span></td>
+                        <td><span className="personName" style={{ "--person-color": person.color } as CSSProperties}><span className="dot" />{personDisplayName(person, text)}</span></td>
                         {weeks.map((hours, index) => <td key={index}>{fmtDuration(hours)}</td>)}
                         <td>{fmtDuration(weeks.reduce((sum, hours) => sum + hours, 0))}</td>
                       </tr>
@@ -1892,12 +1936,28 @@ export default function Home() {
             <div className="sectionTitle">{text.people}</div>
             <div className="peopleList">
               {!plan.people.length && <p className="mutedText">{text.noPeopleAbove}</p>}
-              {plan.people.map((person) => (
-                <div className="personRow" key={person.id} style={{ "--person-color": person.color } as CSSProperties}>
-                  <span className="personName"><span className="dot" />{person.name}</span>
-                  <button className="iconButton" type="button" aria-label={text.removePerson(person.name)} onClick={() => removePerson(person.id)}><Trash2 size={15} /></button>
-                </div>
-              ))}
+              {plan.people.map((person) => {
+                const displayName = personDisplayName(person, text);
+                return (
+                  <div className="personRow" key={person.id} style={{ "--person-color": person.color } as CSSProperties}>
+                    <span className="personName personNameEditable">
+                      <span className="dot" />
+                      <input
+                        className="personRowNameInput"
+                        value={person.name}
+                        onChange={(event) => updatePersonName(person.id, event.target.value)}
+                        onBlur={() => commitPersonName(person.id)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") event.currentTarget.blur();
+                        }}
+                        aria-label={text.editPersonName(displayName)}
+                        placeholder={text.unnamedPerson}
+                      />
+                    </span>
+                    <button className="iconButton" type="button" aria-label={text.removePerson(displayName)} onClick={() => removePerson(person.id)}><Trash2 size={15} /></button>
+                  </div>
+                );
+              })}
             </div>
           </section>
 

@@ -407,6 +407,29 @@ tr:last-child td {
   white-space: nowrap;
 }
 
+.personChipNameInput,
+.personRowNameInput {
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  outline: none;
+}
+
+.personChipNameInput {
+  width: min(112px, 22vw);
+  padding: 2px 3px;
+  border-radius: 999px;
+}
+
+.personChipNameInput:focus,
+.personRowNameInput:focus {
+  background: color-mix(in srgb, var(--person-color) 10%, var(--panel));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--person-color) 18%, transparent);
+}
+
 .chipDeleteButton {
   width: 22px;
   min-width: 22px;
@@ -863,6 +886,16 @@ tr:last-child td {
   align-items: center;
   gap: 7px;
   font-weight: 700;
+}
+
+.personNameEditable {
+  width: 100%;
+}
+
+.personRowNameInput {
+  width: 100%;
+  padding: 5px 6px;
+  border-radius: 6px;
 }
 
 .dot {

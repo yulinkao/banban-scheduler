@@ -64,6 +64,11 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /normalizeWeekCount/);
   assert.match(page, /coverageTargetOptions/);
   assert.match(page, /normalizeCoverageTarget/);
+  assert.match(page, /updatePersonName/);
+  assert.match(page, /commitPersonName/);
+  assert.match(page, /editPersonName/);
+  assert.match(page, /personDisplayName/);
+  assert.match(page, /未命名/);
   assert.match(page, /translations:\s*Record<Locale, Copy>/);
   assert.match(page, /languageStorageKey/);
   assert.match(page, /setLocale/);
@@ -97,6 +102,8 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /已選班段/);
   assert.match(page, /shiftBuilderSection[\s\S]*selectedShift[\s\S]*totalStats[\s\S]*hours[\s\S]*people[\s\S]*coverageWindows[\s\S]*export[\s\S]*preset/);
   assert.match(page, /chipDeleteButton/);
+  assert.match(page, /personChipNameInput/);
+  assert.match(page, /personRowNameInput/);
   assert.match(page, /weekScroll/);
   assert.match(page, /people:\s*\[\]/);
   assert.match(page, /downloadWeekPng/);
@@ -110,6 +117,9 @@ test("removes starter preview code from the product", async () => {
   assert.match(css, /minmax\(360px, 1\.05fr\) minmax\(330px, \.95fr\)/);
   assert.match(css, /\.languagePicker/);
   assert.match(css, /\.topIconButton/);
+  assert.match(css, /\.personChipNameInput/);
+  assert.match(css, /\.personRowNameInput/);
+  assert.match(css, /\.personNameEditable/);
   assert.match(css, /\.helpDialog/);
   assert.doesNotMatch(css, /\.helpDetails/);
   assert.match(css, /\.helpNote/);

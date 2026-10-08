@@ -64,6 +64,10 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /normalizeWeekCount/);
   assert.match(page, /coverageTargetOptions/);
   assert.match(page, /normalizeCoverageTarget/);
+  assert.match(page, /exportTimeRangeForWeek/);
+  assert.match(page, /exportTimeTicks/);
+  assert.match(page, /hourToExportY/);
+  assert.match(page, /exportRangePaddingHours/);
   assert.match(page, /updatePersonName/);
   assert.match(page, /commitPersonName/);
   assert.match(page, /editPersonName/);
@@ -111,6 +115,7 @@ test("removes starter preview code from the product", async () => {
   assert.match(page, /schedule-plan\.json/);
   assert.match(page, /exportWeekWidth\s*=\s*2048/);
   assert.match(page, /exportWeekHeight\s*=\s*1600/);
+  assert.match(page, /drawExportShift\(ctx, plan, slice, \{ dayX, bodyY, bodyH, dayW, range \}/);
   assert.match(page, /localStorage/);
   assert.match(css, /width:\s*min\(1680px, 100%\)/);
   assert.match(css, /minmax\(292px, 330px\)/);

@@ -68,6 +68,13 @@ type DragState = {
   moved: boolean;
 };
 
+type ExportTimeRange = {
+  start: number;
+  end: number;
+  span: number;
+  compact: boolean;
+};
+
 type Locale = "zh-TW" | "zh-CN" | "en";
 type SaveStatus = "auto" | "saved" | "appliedDefault" | "blankReset" | "defaultSaved" | "defaultCleared" | "imported" | "importFailed";
 
@@ -538,6 +545,8 @@ const defaultStorageKey = "yulin-scheduler-default-plan-v1";
 const languageStorageKey = "yulin-scheduler-language-v1";
 const exportWeekWidth = 2048;
 const exportWeekHeight = 1600;
+const exportRangePaddingHours = 1;
+const exportMinRangeHours = 8;
 const timeOptions = Array.from({ length: 49 }, (_, index) => index / 2);
 const weekCountOptions = Array.from({ length: maxWeekCount - minWeekCount + 1 }, (_, index) => minWeekCount + index);
 const defaultCoverageWindows: CoverageWindow[] = Array.from({ length: 7 }, (_, index) => ({
@@ -702,6 +711,13 @@ function closedBands(plan: Plan, day: number) {
     return [[0, window.start], [window.end, 24]].filter(([start, end]) => end > start);
   }
   return [[window.end, window.start]].filter(([start, end]) => end > start);
+}
+
+function coverageOpenSegments(window: CoverageWindow): Array<[number, number]> {
+  if (!window.enabled) return [];
+  if (window.start === window.end) return [[0, 24]];
+  if (window.start < window.end) return [[window.start, window.end]];
+  return [[0, window.end], [window.start, 24]].filter(([start, end]) => end > start);
 }
 
 function activePeopleAt(shifts: Shift[], absHour: number) {
@@ -1023,6 +1039,56 @@ function exportCoverageColor(plan: Plan, day: number, hour: number) {
   return exportTheme.closed;
 }
 
+function exportTimeRangeForWeek(plan: Plan, week: number): ExportTimeRange {
+  let min = 24;
+  let max = 0;
+  let found = false;
+  const includeRange = (start: number, end: number) => {
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) return;
+    min = Math.min(min, clamp(start, 0, 24));
+    max = Math.max(max, clamp(end, 0, 24));
+    found = true;
+  };
+
+  for (let index = 0; index < 7; index += 1) {
+    const day = week * 7 + index;
+    const window = plan.coverageWindows[day % 7] || defaultCoverageWindows[day % 7];
+    coverageOpenSegments(window).forEach(([start, end]) => includeRange(start, end));
+    shiftSlicesForDay(plan.shifts, day).forEach((slice) => includeRange(slice.start, slice.end));
+  }
+
+  if (!found) return { start: 0, end: 24, span: 24, compact: false };
+
+  let start = clamp(Math.floor(min - exportRangePaddingHours), 0, 24);
+  let end = clamp(Math.ceil(max + exportRangePaddingHours), 0, 24);
+
+  if (end - start < exportMinRangeHours) {
+    const center = (min + max) / 2;
+    start = clamp(Math.floor(center - exportMinRangeHours / 2), 0, 24 - exportMinRangeHours);
+    end = start + exportMinRangeHours;
+  }
+
+  if (start <= 0 && end >= 24) return { start: 0, end: 24, span: 24, compact: false };
+  return { start, end, span: end - start, compact: true };
+}
+
+function hourToExportY(hour: number, range: ExportTimeRange, bodyY: number, bodyH: number) {
+  return bodyY + ((hour - range.start) / range.span) * bodyH;
+}
+
+function exportTimeTicks(range: ExportTimeRange) {
+  const ticks = new Set<number>([range.start, range.end]);
+  const step = range.span <= 8 ? 2 : range.span <= 16 ? 3 : 6;
+  const first = Math.ceil(range.start / step) * step;
+  for (let hour = first; hour < range.end; hour += step) {
+    if (hour > range.start) ticks.add(hour);
+  }
+  [0, 6, 12, 18, 24].forEach((hour) => {
+    if (hour > range.start && hour < range.end) ticks.add(hour);
+  });
+  return Array.from(ticks).sort((a, b) => a - b);
+}
+
 function drawExportCoverageBar(ctx: CanvasRenderingContext2D, plan: Plan, day: number, x: number, y: number, width: number, height: number) {
   fillRound(ctx, x, y, width, height, height / 2, exportTheme.closed);
   const segmentWidth = width / 48;
@@ -1036,18 +1102,27 @@ function drawExportCoverageBar(ctx: CanvasRenderingContext2D, plan: Plan, day: n
   ctx.restore();
 }
 
-function drawExportShift(ctx: CanvasRenderingContext2D, plan: Plan, slice: Slice, geometry: { dayX: number; bodyY: number; bodyH: number; dayW: number }, text: Copy = translations[defaultLocale]) {
+function drawExportShift(
+  ctx: CanvasRenderingContext2D,
+  plan: Plan,
+  slice: Slice,
+  geometry: { dayX: number; bodyY: number; bodyH: number; dayW: number; range: ExportTimeRange },
+  text: Copy = translations[defaultLocale],
+) {
   const person = personById(plan.people, slice.shift.personId);
   if (!person) return;
-  const { dayX, bodyY, bodyH, dayW } = geometry;
+  const { dayX, bodyY, bodyH, dayW, range } = geometry;
+  const visibleStart = clamp(slice.start, range.start, range.end);
+  const visibleEnd = clamp(slice.end, range.start, range.end);
+  if (visibleEnd <= visibleStart) return;
   const gap = 8;
   const laneGap = 6;
   const usableWidth = dayW - gap * 2;
   const laneWidth = usableWidth / slice.laneCount;
   const x = dayX + gap + slice.lane * laneWidth + laneGap / 2;
   const width = Math.max(22, laneWidth - laneGap);
-  const y = bodyY + (slice.start / 24) * bodyH + 2;
-  const height = Math.max(24, ((slice.end - slice.start) / 24) * bodyH - 4);
+  const y = hourToExportY(visibleStart, range, bodyY, bodyH) + 2;
+  const height = Math.max(24, ((visibleEnd - visibleStart) / range.span) * bodyH - 4);
 
   ctx.save();
   ctx.shadowColor = exportTheme.shadow;
@@ -1063,23 +1138,39 @@ function drawExportShift(ctx: CanvasRenderingContext2D, plan: Plan, slice: Slice
   ctx.clip();
   ctx.fillStyle = person.color;
   ctx.fillRect(x, y, 4, height);
-  const labelX = x + 14;
-  const maxTextWidth = width - 20;
-  const labelY = clamp(y + height / 2 - 20, y + 12, y + Math.max(12, height - 38));
+  const labelX = x + 13;
+  const maxTextWidth = width - 19;
+  const name = personDisplayName(person, text);
+  const startTime = fmtHour(slice.start);
+  const endTime = fmtHour(slice.end);
+  const time = `${startTime}-${endTime}`;
+  const nameSize = width < 96 ? 15 : 17;
+  const timeSize = width < 96 ? 13 : 15;
+  const lineGap = 3;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
+  ctx.font = exportFont(timeSize, 500);
+  const splitTime = width < 118 && ctx.measureText(time).width > maxTextWidth;
+  const totalLabelH = splitTime ? nameSize + timeSize * 2 + lineGap * 2 : nameSize + timeSize + lineGap;
+  const labelY = clamp(y + height / 2 - totalLabelH / 2, y + 12, y + Math.max(12, height - totalLabelH - 10));
   ctx.fillStyle = exportTheme.text;
-  ctx.font = exportFont(17, 700);
-  drawTextEllipsis(ctx, personDisplayName(person, text), labelX, labelY, maxTextWidth);
+  ctx.font = exportFont(nameSize, 700);
+  drawTextEllipsis(ctx, name, labelX, labelY, maxTextWidth);
   ctx.fillStyle = exportTheme.muted;
-  ctx.font = exportFont(15, 500);
-  drawTextEllipsis(ctx, `${fmtHour(slice.start)}-${fmtHour(slice.end)}`, labelX, labelY + 24, maxTextWidth);
+  ctx.font = exportFont(timeSize, 500);
+  if (splitTime) {
+    drawTextEllipsis(ctx, startTime, labelX, labelY + nameSize + lineGap, maxTextWidth);
+    drawTextEllipsis(ctx, `-${endTime}`, labelX, labelY + nameSize + timeSize + lineGap * 2, maxTextWidth);
+  } else {
+    drawTextEllipsis(ctx, time, labelX, labelY + nameSize + lineGap, maxTextWidth);
+  }
   ctx.restore();
 }
 
 function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number, yOffset: number, width: number, height: number, text: Copy = translations[defaultLocale]) {
   const totals = personTotals(plan);
   const coverage = coverageSummary(plan, week);
+  const range = exportTimeRangeForWeek(plan, week);
   const weekTotal = plan.people.reduce((sum, person) => sum + (totals[person.id]?.[week] || 0), 0);
   const pad = 28;
   const cardX = pad;
@@ -1119,14 +1210,17 @@ function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number,
   days.forEach((day, index) => {
     const dayX = cardX + timeW + index * dayW;
     closedBands(plan, day).forEach(([start, end]) => {
+      const visibleStart = Math.max(start, range.start);
+      const visibleEnd = Math.min(end, range.end);
+      if (visibleEnd <= visibleStart) return;
       ctx.fillStyle = exportTheme.closed;
-      ctx.fillRect(dayX, bodyY + (start / 24) * bodyH, dayW, ((end - start) / 24) * bodyH);
+      ctx.fillRect(dayX, hourToExportY(visibleStart, range, bodyY, bodyH), dayW, ((visibleEnd - visibleStart) / range.span) * bodyH);
     });
   });
 
-  for (let hour = 0; hour <= 24; hour += 1) {
-    const y = bodyY + (hour / 24) * bodyH;
-    const major = hour % 6 === 0;
+  for (let hour = range.start; hour <= range.end; hour += 1) {
+    const y = hourToExportY(hour, range, bodyY, bodyH);
+    const major = hour === range.start || hour === range.end || hour % 6 === 0;
     drawLine(ctx, cardX, y, cardX + cardW, y, major ? exportTheme.lineStrong : exportTheme.lineSoft, major ? 1.2 : 1);
   }
   for (let index = 0; index <= 8; index += 1) {
@@ -1141,14 +1235,14 @@ function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number,
   ctx.fillText(text.time, cardX + 10, cardY + 16);
   ctx.fillStyle = exportTheme.muted;
   ctx.font = exportFont(18, 600);
-  ctx.fillText(text.dragLineTop, cardX + 10, cardY + 52);
-  ctx.fillText(text.dragLineBottom, cardX + 10, cardY + 78);
+  ctx.fillText(fmtExportHour(range.start), cardX + 10, cardY + 52);
+  ctx.fillText(fmtExportHour(range.end), cardX + 10, cardY + 78);
 
-  [0, 6, 12, 18, 24].forEach((hour) => {
-    const labelY = hour === 24 ? bodyBottom - 22 : bodyY + (hour / 24) * bodyH - 10;
+  exportTimeTicks(range).forEach((hour) => {
+    const labelY = hour === range.end ? bodyBottom - 22 : hourToExportY(hour, range, bodyY, bodyH) - 10;
     ctx.fillStyle = exportTheme.muted;
     ctx.font = exportFont(17, 500);
-    ctx.fillText(`${String(hour).padStart(2, "0")}:00`, cardX + 10, labelY);
+    ctx.fillText(fmtExportHour(hour), cardX + 10, labelY);
   });
 
   days.forEach((day, index) => {
@@ -1170,7 +1264,7 @@ function drawExportWeek(ctx: CanvasRenderingContext2D, plan: Plan, week: number,
   days.forEach((day, index) => {
     const dayX = cardX + timeW + index * dayW;
     layoutSlices(shiftSlicesForDay(plan.shifts, day)).forEach((slice) => {
-      drawExportShift(ctx, plan, slice, { dayX, bodyY, bodyH, dayW }, text);
+      drawExportShift(ctx, plan, slice, { dayX, bodyY, bodyH, dayW, range }, text);
     });
   });
   ctx.restore();
